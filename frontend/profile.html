@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Financial Profile | Finova AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <span>F</span>
+            <h2>Finova AI</h2>
+        </div>
+
+        <nav>
+            <a href="index.html">🏠 Dashboard</a>
+            <a href="advisor.html">🤖 AI Advisor</a>
+            <a href="expenses.html">💳 Expenses</a>
+            <a href="investments.html">📈 Investments</a>
+            <a href="goals.html">🎯 Goals</a>
+            <a href="alerts.html">🔔 Alerts</a>
+            <a href="profile.html" class="active">👤 Profile</a>
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <p class="eyebrow">FINANCIAL PROFILE</p>
+
+            <h1>My Financial Profile 👤</h1>
+
+            <p>
+                Tell Finova about your financial situation.
+            </p>
+
+        </div>
+
+
+        <section class="card">
+
+            <h2>Your Financial Information</h2>
+
+            <p>
+                This information helps Finova provide more personalized
+                financial analysis.
+            </p>
+
+
+            <input
+                type="number"
+                id="income"
+                placeholder="Monthly income ₹"
+            >
+
+
+            <input
+                type="number"
+                id="savings"
+                placeholder="Current savings ₹"
+            >
+
+
+            <input
+                type="number"
+                id="emergency"
+                placeholder="Emergency fund ₹"
+            >
+
+
+            <select id="risk">
+
+                <option value="low">
+                    Low Risk
+                </option>
+
+                <option value="moderate" selected>
+                    Moderate Risk
+                </option>
+
+                <option value="high">
+                    High Risk
+                </option>
+
+            </select>
+
+
+            <button onclick="saveProfile()">
+                💾 Save Financial Profile
+            </button>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>Current Profile</h2>
+
+            <div id="profileData">
+                Loading profile...
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:5000/api";
+
+
+async function loadProfile() {
+
+    try {
+
+        const response =
+            await fetch(`${API}/profile`);
+
+        const data =
+            await response.json();
+
+
+        if (!data) {
+
+            document.getElementById("profileData").innerHTML =
+                "No profile found.";
+
+            return;
+        }
+
+
+        document.getElementById("income").value =
+            data.income || "";
+
+        document.getElementById("savings").value =
+            data.savings || "";
+
+        document.getElementById("emergency").value =
+            data.emergency_fund || "";
+
+        document.getElementById("risk").value =
+            data.risk_level || "moderate";
+
+
+        document.getElementById("profileData").innerHTML = `
+
+            <div style="
+                background:#f5f7fb;
+                padding:20px;
+                border-radius:15px;
+                line-height:2;
+            ">
+
+                💰 Monthly Income:
+                <strong>
+                    ₹${Number(data.income || 0).toLocaleString()}
+                </strong>
+
+                <br>
+
+                💵 Savings:
+                <strong>
+                    ₹${Number(data.savings || 0).toLocaleString()}
+                </strong>
+
+                <br>
+
+                🛟 Emergency Fund:
+                <strong>
+                    ₹${Number(data.emergency_fund || 0).toLocaleString()}
+                </strong>
+
+                <br>
+
+                📊 Risk Level:
+                <strong>
+                    ${data.risk_level || "moderate"}
+                </strong>
+
+            </div>
+
+        `;
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("profileData").innerHTML =
+            "❌ Cannot connect to Flask.";
+
+    }
+
+}
+
+
+async function saveProfile() {
+
+    const income =
+        document.getElementById("income").value;
+
+    const savings =
+        document.getElementById("savings").value;
+
+    const emergency =
+        document.getElementById("emergency").value;
+
+    const risk =
+        document.getElementById("risk").value;
+
+
+    try {
+
+        const response =
+            await fetch(`${API}/profile`, {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    income: Number(income || 0),
+
+                    savings: Number(savings || 0),
+
+                    emergency_fund:
+                        Number(emergency || 0),
+
+                    risk_level: risk
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Could not save profile."
+            );
+
+            return;
+        }
+
+
+        alert("✅ Financial profile saved!");
+
+        loadProfile();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("❌ Cannot connect to Flask.");
+
+    }
+
+}
+
+
+loadProfile();
+
+</script>
+
+</body>
+</html>

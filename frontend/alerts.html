@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Alerts | Finova AI</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                F
+            </div>
+
+            Finova AI
+
+        </div>
+
+
+        <nav>
+
+            <a href="index.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a href="investments.html">
+                📈 Investments
+            </a>
+
+            <a href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a class="active"
+               href="alerts.html">
+                🔔 Alerts
+            </a>
+            <a href="profile.html">👤 Profile</a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="small-title">
+                    SMART NOTIFICATIONS
+                </p>
+
+                <h1>
+                    Alerts 🔔
+                </h1>
+
+                <p class="subtitle">
+                    Important updates from Finova AI.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <div class="panel">
+
+            <h2>
+                Your Alerts
+            </h2>
+
+            <br>
+
+            <div id="alertList">
+                Loading alerts...
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://127.0.0.1:5000/api";
+
+
+async function loadAlerts() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/alerts`
+            );
+
+
+        const alerts =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "alertList"
+            );
+
+
+        if (alerts.length === 0) {
+
+            list.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:50px;
+                ">
+
+                    <div style="
+                        font-size:50px;
+                    ">
+                        🔔
+                    </div>
+
+                    <h3>
+                        No alerts yet
+                    </h3>
+
+                    <p>
+                        Finova will show important
+                        financial alerts here.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            alerts.map(
+                alert => `
+
+                <div style="
+                    padding:20px;
+                    margin-bottom:12px;
+                    background:#f5f7fb;
+                    border-radius:14px;
+                ">
+
+                    <h3>
+                        🔔 ${alert.title}
+                    </h3>
+
+                    <br>
+
+                    <p>
+                        ${alert.message}
+                    </p>
+
+                    <small>
+                        ${alert.created_at}
+                    </small>
+
+                </div>
+
+                `
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+loadAlerts();
+
+</script>
+
+</body>
+
+</html>

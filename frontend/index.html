@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Finova AI</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">F</div>
+            <span>Finova AI</span>
+        </div>
+
+        <nav>
+
+            <a class="active">Dashboard</a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a href="investments.html">
+                📈 Investments
+            </a>
+
+            <a href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a href="alerts.html">
+                🔔 Alerts
+            </a>
+            <a href="profile.html">👤 Profile</a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="settings.html">⚙ Settings</a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="small-title">
+                    PERSONAL FINANCE
+                </p>
+
+                <h1>
+                    Good morning 👋
+                </h1>
+
+                <p class="subtitle">
+                    Your financial intelligence center
+                </p>
+
+            </div>
+
+            <div class="profile">
+
+    <button class="avatar" onclick="toggleProfileMenu()">
+        D
+    </button>
+
+    <div id="profileMenu" class="profile-dropdown">
+
+        <div class="profile-menu-title">
+            My Account
+        </div>
+
+        <button onclick="openProfile()">
+            👤 Profile
+        </button>
+
+        <button onclick="switchAccount()">
+            🔄 Switch Account
+        </button>
+
+        <button onclick="logoutUser()" class="logout-option">
+            🚪 Logout
+        </button>
+
+    </div>
+
+</div>
+
+        </header>
+
+
+        <!-- CARDS -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <span>
+                    Monthly Income
+                </span>
+
+                <h2 id="income">
+                    ₹0
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <span>
+                    Total Spending
+                </span>
+
+                <h2 id="expenses">
+                    ₹0
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <span>
+                    Savings
+                </span>
+
+                <h2 id="savings">
+                    ₹0
+                </h2>
+
+            </div>
+
+
+            <div class="card">
+
+                <span>
+                    Emergency Fund
+                </span>
+
+                <h2 id="emergency">
+                    ₹0
+                </h2>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI ADVISOR -->
+
+        <section class="advisor-card">
+
+            <div>
+
+                <span class="ai-badge">
+                    ✨ AI FINANCIAL ADVISOR
+                </span>
+
+                <h2>
+                    What financial decision
+                    are you thinking about?
+                </h2>
+
+                <p>
+                    Ask Finova to analyze your
+                    finances and explain the trade-offs.
+                </p>
+
+            </div>
+
+            <a href="advisor.html"
+               class="ai-button">
+
+                Ask Finova AI →
+
+            </a>
+
+        </section>
+
+
+        <!-- CHART -->
+
+        <section class="dashboard-grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Spending Overview
+                    </h2>
+
+                    <span>
+                        This Month
+                    </span>
+
+                </div>
+
+                <canvas id="expenseChart"></canvas>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Financial Health
+                    </h2>
+
+                </div>
+
+                <div class="health-score">
+
+                    <div class="score">
+                        78
+                    </div>
+
+                    <p>
+                        Good financial health
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

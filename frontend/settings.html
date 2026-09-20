@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings - Finova AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">F</div>
+            <span>Finova AI</span>
+        </div>
+
+        <nav>
+
+            <a href="index.html">
+                📊 Dashboard
+            </a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a href="investments.html">
+                📈 Investments
+            </a>
+
+            <a href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a href="alerts.html">
+                🔔 Alerts
+            </a>
+
+            <a href="profile.html">
+                👤 Profile
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a class="active">
+                ⚙ Settings
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="small-title">
+                    PERSONAL FINANCE
+                </p>
+
+                <h1>
+                    Settings
+                </h1>
+
+                <p class="subtitle">
+                    Manage your Finova preferences
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- SETTINGS -->
+        <section class="settings-container">
+
+            <div class="settings-card">
+
+                <h2>Account Settings</h2>
+
+                <p>
+                    Manage your account and personal information.
+                </p>
+
+                <a href="profile.html" class="settings-button">
+                    👤 Manage Profile
+                </a>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <h2>Notifications</h2>
+
+                <p>
+                    Control how Finova sends financial alerts.
+                </p>
+
+                <label class="setting-row">
+
+                    <span>
+                        Financial Alerts
+                    </span>
+
+                    <input type="checkbox" checked>
+
+                </label>
+
+                <label class="setting-row">
+
+                    <span>
+                        Investment Alerts
+                    </span>
+
+                    <input type="checkbox" checked>
+
+                </label>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <h2>Appearance</h2>
+
+                <p>
+                    Customize your Finova experience.
+                </p>
+
+                <label class="setting-row">
+
+    <span>
+        Dark Theme
+    </span>
+
+    <input
+        type="checkbox"
+        id="darkThemeToggle"
+        checked
+        onchange="toggleDarkTheme(this)"
+    >
+
+</label>
+
+            </div>
+
+
+            <div class="settings-card danger-card">
+
+                <h2>Account</h2>
+
+                <p>
+                    Sign out from your Finova account.
+                </p>
+
+                <button
+                    class="logout-settings-btn"
+                    onclick="logoutUser()"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Advisor | Finova AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <span>F</span>
+            <h2>Finova AI</h2>
+        </div>
+
+        <nav>
+            <a href="index.html">🏠 Dashboard</a>
+            <a href="advisor.html" class="active">🤖 AI Advisor</a>
+            <a href="expenses.html">💳 Expenses</a>
+            <a href="investments.html">📈 Investments</a>
+            <a href="goals.html">🎯 Goals</a>
+            <a href="alerts.html">🔔 Alerts</a>
+            <a href="profile.html">👤 Profile</a>
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <p class="eyebrow">INTELLIGENT FINANCIAL ASSISTANT</p>
+
+            <h1>AI Financial Advisor 🤖</h1>
+
+            <p>
+                Ask Finova AI about your personal financial decisions.
+            </p>
+
+        </div>
+
+
+        <!-- ADVISOR CARD -->
+        <section class="card">
+
+            <h2>Ask Finova AI</h2>
+
+            <p>
+                Get personalized financial guidance based on your
+                income, expenses, savings, goals and investments.
+            </p>
+
+            <textarea
+                id="question"
+                placeholder="Example: Can I afford to buy a ₹50,000 laptop?"
+                rows="5">
+            </textarea>
+
+            <button onclick="askAdvisor()">
+                🤖 Ask Finova AI
+            </button>
+
+        </section>
+
+
+        <!-- RESPONSE -->
+        <section class="card">
+
+            <h2>Finova's Analysis</h2>
+
+            <div id="answer">
+
+                <div style="text-align:center; padding:30px;">
+                    <h3>💡 Ask a question</h3>
+
+                    <p>
+                        Your financial analysis will appear here.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:5000/api";
+
+
+async function askAdvisor() {
+
+    const question =
+        document.getElementById("question").value.trim();
+
+    if (!question) {
+
+        alert("Please enter a question.");
+
+        return;
+    }
+
+
+    const answerBox =
+        document.getElementById("answer");
+
+
+    answerBox.innerHTML = `
+        <div style="text-align:center; padding:30px;">
+            <h3>🤔 Finova AI is analyzing...</h3>
+            <p>Please wait.</p>
+        </div>
+    `;
+
+
+    try {
+
+        const response = await fetch(`${API}/advisor`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                question: question
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            answerBox.innerHTML = `
+                <div style="padding:20px;">
+                    ❌ ${data.error || "Something went wrong."}
+                </div>
+            `;
+
+            return;
+        }
+
+
+        answerBox.innerHTML = `
+            <div style="
+                white-space: pre-wrap;
+                line-height: 1.7;
+                padding: 20px;
+                background: #f5f7fb;
+                border-radius: 15px;
+            ">
+                ${data.answer}
+            </div>
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        answerBox.innerHTML = `
+            <div style="padding:20px;">
+                ❌ Cannot connect to Flask.
+            </div>
+        `;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

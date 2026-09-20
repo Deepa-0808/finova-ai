@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Finova AI</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js for the spending chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">F</div>
+            <span>Finova AI</span>
+        </div>
+
+        <nav>
+            <a href="dashboard.html" class="active">
+                🏠 Dashboard
+            </a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a href="investments.html">
+                📈 Investments
+            </a>
+
+            <a href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a href="alerts.html">
+                🔔 Alerts
+            </a>
+
+            <a href="profile.html">
+                👤 Profile
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="#">⚙ Settings</a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header>
+
+            <div>
+                <p class="small-title">PERSONAL FINANCE</p>
+
+                <h1>Good morning 👋</h1>
+
+                <p class="subtitle">
+                    Your financial intelligence center
+                </p>
+            </div>
+
+            <a href="profile.html" class="profile" title="Open Profile">
+                <div class="avatar">D</div>
+            </a>
+
+        </header>
+
+
+        <!-- FINANCIAL SUMMARY -->
+        <section class="cards">
+
+            <div class="card">
+                <span>Monthly Income</span>
+                <h2 id="income">₹0</h2>
+            </div>
+
+            <div class="card">
+                <span>Total Spending</span>
+                <h2 id="expenses">₹0</h2>
+            </div>
+
+            <div class="card">
+                <span>Savings</span>
+                <h2 id="savings">₹0</h2>
+            </div>
+
+            <div class="card">
+                <span>Emergency Fund</span>
+                <h2 id="emergency">₹0</h2>
+            </div>
+
+        </section>
+
+
+        <!-- AI ADVISOR -->
+        <section class="advisor-card">
+
+            <div>
+
+                <span class="ai-badge">
+                    ✨ AI FINANCIAL ADVISOR
+                </span>
+
+                <h2>
+                    What financial decision are you thinking about?
+                </h2>
+
+                <p>
+                    Ask Finova to analyze your finances and explain the
+                    trade-offs.
+                </p>
+
+            </div>
+
+            <a href="advisor.html" class="ai-button">
+                Ask Finova AI →
+            </a>
+
+        </section>
+
+
+        <!-- LOWER DASHBOARD -->
+        <section class="dashboard-grid">
+
+            <!-- SPENDING CHART -->
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>Spending Overview</h2>
+
+                    <span>This Month</span>
+
+                </div>
+
+                <canvas id="expenseChart"></canvas>
+
+            </div>
+
+
+            <!-- FINANCIAL HEALTH -->
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>Financial Health</h2>
+
+                </div>
+
+                <div class="health-score">
+
+                    <div class="score">
+                        78
+                    </div>
+
+                    <p>
+                        Good financial health
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API = "http://127.0.0.1:5000/api";
+
+
+/* =========================
+   LOAD DASHBOARD DATA
+   ========================= */
+
+async function loadDashboard() {
+
+    try {
+
+        const response = await fetch(`${API}/dashboard`);
+
+        const data = await response.json();
+
+        document.getElementById("income").innerText =
+            `₹${Number(data.income || 0).toLocaleString()}`;
+
+        document.getElementById("expenses").innerText =
+            `₹${Number(data.total_expenses || 0).toLocaleString()}`;
+
+        document.getElementById("savings").innerText =
+            `₹${Number(data.savings || 0).toLocaleString()}`;
+
+        document.getElementById("emergency").innerText =
+            `₹${Number(data.emergency_fund || 0).toLocaleString()}`;
+
+    } catch (error) {
+
+        console.error("Dashboard error:", error);
+
+    }
+
+}
+
+
+/* =========================
+   SPENDING CHART
+   ========================= */
+
+async function loadExpenseChart() {
+
+    try {
+
+        const response = await fetch(`${API}/expenses`);
+
+        const expenses = await response.json();
+
+        const totals = {};
+
+        expenses.forEach(expense => {
+
+            const category = expense.category || "Other";
+
+            totals[category] =
+                (totals[category] || 0) +
+                Number(expense.amount || 0);
+
+        });
+
+        const labels = Object.keys(totals);
+
+        const values = Object.values(totals);
+
+        const canvas =
+            document.getElementById("expenseChart");
+
+        if (!canvas) return;
+
+        if (window.finovaChart) {
+            window.finovaChart.destroy();
+        }
+
+        /* Show a friendly empty state */
+        if (labels.length === 0) {
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            ctx.font = "15px Inter, Arial";
+
+            ctx.textAlign = "center";
+
+            ctx.fillStyle = "#858da0";
+
+            ctx.fillText(
+                "Add expenses to see your spending overview",
+                canvas.width / 2,
+                100
+            );
+
+            return;
+        }
+
+
+        window.finovaChart =
+            new Chart(canvas, {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [{
+
+                        data: values,
+
+                        backgroundColor: [
+                            "#6c5ce7",
+                            "#3cc9d8",
+                            "#19b878",
+                            "#f59e0b",
+                            "#ef5b6b",
+                            "#8b7cf6",
+                            "#6b7280",
+                            "#c084fc"
+                        ],
+
+                        borderWidth: 0,
+
+                        hoverOffset: 8
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    cutout: "68%",
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom",
+
+                            labels: {
+
+                                padding: 18,
+
+                                usePointStyle: true,
+
+                                font: {
+                                    size: 12
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+    } catch (error) {
+
+        console.error("Chart error:", error);
+
+    }
+
+}
+
+
+/* =========================
+   START DASHBOARD
+   ========================= */
+
+loadDashboard();
+
+loadExpenseChart();
+
+</script>
+
+</body>
+</html>

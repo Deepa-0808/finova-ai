@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Goals | Finova AI</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                F
+            </div>
+
+            Finova AI
+
+        </div>
+
+
+        <nav>
+
+            <a href="index.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a href="investments.html">
+                📈 Investments
+            </a>
+
+            <a class="active"
+               href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a href="alerts.html">
+                🔔 Alerts
+            </a>
+            <a href="profile.html">👤 Profile</a>
+            
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="small-title">
+                    FINANCIAL PLANNING
+                </p>
+
+                <h1>
+                    Savings Goals 🎯
+                </h1>
+
+                <p class="subtitle">
+                    Turn your plans into achievable goals.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- CREATE GOAL -->
+
+        <div class="panel">
+
+            <h2>
+                Create New Goal
+            </h2>
+
+            <br>
+
+
+            <input
+                id="goalName"
+                type="text"
+                placeholder="Goal name (Example: Goa Trip)"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <input
+                id="target"
+                type="number"
+                placeholder="Target amount ₹"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <input
+                id="deadline"
+                type="date"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <button
+                class="ai-button"
+                onclick="createGoal()">
+
+                + Create Goal
+
+            </button>
+
+        </div>
+
+
+        <br>
+
+
+        <!-- GOALS -->
+
+        <div class="panel">
+
+            <h2>
+                My Goals
+            </h2>
+
+            <br>
+
+            <div id="goalList">
+                Loading goals...
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://127.0.0.1:5000/api";
+
+
+async function createGoal() {
+
+    const name =
+        document.getElementById(
+            "goalName"
+        ).value;
+
+    const target =
+        document.getElementById(
+            "target"
+        ).value;
+
+    const deadline =
+        document.getElementById(
+            "deadline"
+        ).value;
+
+
+    if (!name || !target) {
+
+        alert(
+            "Please enter goal name and target."
+        );
+
+        return;
+
+    }
+
+
+    const response =
+        await fetch(
+            `${API}/goals`,
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    name: name,
+
+                    target: target,
+
+                    deadline: deadline
+
+                })
+
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    alert(data.message);
+
+
+    document.getElementById(
+        "goalName"
+    ).value = "";
+
+    document.getElementById(
+        "target"
+    ).value = "";
+
+
+    loadGoals();
+
+}
+
+
+async function loadGoals() {
+
+    const response =
+        await fetch(
+            `${API}/goals`
+        );
+
+
+    const goals =
+        await response.json();
+
+
+    const list =
+        document.getElementById(
+            "goalList"
+        );
+
+
+    if (goals.length === 0) {
+
+        list.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:30px;
+            ">
+
+                <h3>
+                    🎯 No goals yet
+                </h3>
+
+                <p>
+                    Create your first savings goal above.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        goals.map(
+            goal => {
+
+                const progress =
+                    goal.target > 0
+                    ? (goal.saved /
+                       goal.target) * 100
+                    : 0;
+
+
+                return `
+
+                <div style="
+                    padding:20px;
+                    margin-bottom:15px;
+                    background:#f5f7fb;
+                    border-radius:15px;
+                ">
+
+                    <h3>
+                        🎯 ${goal.name}
+                    </h3>
+
+                    <br>
+
+                    <p>
+                        Target:
+                        ₹${Number(
+                            goal.target
+                        ).toLocaleString()}
+                    </p>
+
+                    <p>
+                        Saved:
+                        ₹${Number(
+                            goal.saved
+                        ).toLocaleString()}
+                    </p>
+
+                    <p>
+                        Deadline:
+                        ${goal.deadline || "Not set"}
+                    </p>
+
+                    <br>
+
+                    <div style="
+                        background:#ddd;
+                        height:10px;
+                        border-radius:10px;
+                    ">
+
+                        <div style="
+                            width:${Math.min(
+                                progress,
+                                100
+                            )}%;
+                            height:10px;
+                            background:#7c3aed;
+                            border-radius:10px;
+                        ">
+                        </div>
+
+                    </div>
+
+                    <small>
+                        ${progress.toFixed(0)}% complete
+                    </small>
+
+                </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+loadGoals();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Investments | Finova AI</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                F
+            </div>
+
+            <span>
+                Finova AI
+            </span>
+
+        </div>
+
+
+        <nav>
+
+            <a href="index.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="advisor.html">
+                🤖 AI Advisor
+            </a>
+
+            <a href="expenses.html">
+                💳 Expenses
+            </a>
+
+            <a class="active"
+               href="investments.html">
+                📈 Investments
+            </a>
+
+            <a href="goals.html">
+                🎯 Goals
+            </a>
+
+            <a href="alerts.html">
+                🔔 Alerts
+            </a>
+            <a href="profile.html">👤 Profile</a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <p class="small-title">
+                    INVESTMENT TRACKER
+                </p>
+
+                <h1>
+                    Investments 📈
+                </h1>
+
+                <p class="subtitle">
+                    Track your investment portfolio.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- ADD INVESTMENT -->
+
+        <div class="panel">
+
+            <h2>
+                Add Investment
+            </h2>
+
+            <br>
+
+
+            <input
+                id="asset"
+                type="text"
+                placeholder="Asset name (Example: Apple)"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <select
+                id="assetType"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+                <option value="Stock">
+                    📊 Stock
+                </option>
+
+                <option value="Mutual Fund">
+                    📈 Mutual Fund
+                </option>
+
+                <option value="Crypto">
+                    ₿ Cryptocurrency
+                </option>
+
+                <option value="Bond">
+                    🏦 Bond
+                </option>
+
+                <option value="IPO">
+                    🚀 IPO
+                </option>
+
+            </select>
+
+            <br><br>
+
+
+            <input
+                id="amount"
+                type="number"
+                placeholder="Investment amount ₹"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <input
+                id="purchasePrice"
+                type="number"
+                placeholder="Purchase price"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <input
+                id="currentPrice"
+                type="number"
+                placeholder="Current price"
+                style="padding:15px; width:100%; border-radius:10px; border:1px solid #ddd;"
+            >
+
+            <br><br>
+
+
+            <button
+                class="ai-button"
+                onclick="addInvestment()">
+
+                + Add Investment
+
+            </button>
+
+        </div>
+
+
+        <br>
+
+
+        <!-- INVESTMENT LIST -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    My Portfolio
+                </h2>
+
+                <span>
+                    Investments
+                </span>
+
+            </div>
+
+
+            <div id="investmentList">
+
+                Loading investments...
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API =
+    "http://127.0.0.1:5000/api";
+
+
+async function addInvestment() {
+
+    const asset =
+        document.getElementById(
+            "asset"
+        ).value;
+
+    const assetType =
+        document.getElementById(
+            "assetType"
+        ).value;
+
+    const amount =
+        document.getElementById(
+            "amount"
+        ).value;
+
+    const purchasePrice =
+        document.getElementById(
+            "purchasePrice"
+        ).value || 0;
+
+    const currentPrice =
+        document.getElementById(
+            "currentPrice"
+        ).value || 0;
+
+
+    if (!asset || !amount) {
+
+        alert(
+            "Please enter asset and amount."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/investments`,
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        asset: asset,
+
+                        asset_type:
+                            assetType,
+
+                        amount: amount,
+
+                        purchase_price:
+                            purchasePrice,
+
+                        current_price:
+                            currentPrice
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Something went wrong."
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "✅ Investment added!"
+        );
+
+
+        document.getElementById(
+            "asset"
+        ).value = "";
+
+        document.getElementById(
+            "amount"
+        ).value = "";
+
+
+        loadInvestments();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Cannot connect to Flask."
+        );
+
+    }
+
+}
+
+
+async function loadInvestments() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/investments`
+            );
+
+
+        const investments =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "investmentList"
+            );
+
+
+        if (investments.length === 0) {
+
+            list.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:30px;
+                ">
+
+                    <h3>
+                        📊 No investments yet
+                    </h3>
+
+                    <p>
+                        Add your first investment above.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            investments.map(
+                investment => `
+
+                <div style="
+                    padding:20px;
+                    margin-bottom:12px;
+                    background:#f5f7fb;
+                    border-radius:14px;
+                ">
+
+                    <h3>
+                        📈 ${investment.asset}
+                    </h3>
+
+                    <p>
+                        Type:
+                        ${investment.asset_type}
+                    </p>
+
+                    <p>
+                        Invested:
+                        ₹${Number(
+                            investment.amount
+                        ).toLocaleString()}
+                    </p>
+
+                    <p>
+                        Purchase price:
+                        ₹${investment.purchase_price}
+                    </p>
+
+                    <p>
+                        Current price:
+                        ₹${investment.current_price}
+                    </p>
+
+                </div>
+
+                `
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+loadInvestments();
+
+</script>
+
+</body>
+
+</html>
